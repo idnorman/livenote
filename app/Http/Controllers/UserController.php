@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Models\User\UserCreated;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -31,6 +32,10 @@ class UserController extends Controller
             'password' => $request->password
         ]);
 
+        if($created){
+            event(new UserCreated($created));
+        }
+        
         return new JsonResponse([
             'data' => $created
         ]);
@@ -41,6 +46,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+
         return new JsonResponse([
             'data' => $user
         ]);

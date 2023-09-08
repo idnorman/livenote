@@ -1,5 +1,7 @@
 <?php
 
+use App\Mail\WelcomeMail;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +17,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/test', function(){
+    $user = User::factory()->make();
+
+    Mail::to($user)
+        ->send(new WelcomeMail($user));
+
+    return null;
 });

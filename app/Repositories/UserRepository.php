@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Repositories;
+use App\Events\Models\User\UserCreated;
+use App\Events\Models\User\UserDeleted;
+use App\Events\Models\User\UserUpdated;
 use App\Exceptions\GeneralJsonException;
 use App\Models\User;
 use DB;
@@ -15,9 +18,9 @@ class UserRepository extends BaseRepository{
                 'password' => data_get($attibutes, 'password')
             ]);
 
-            if(!$created){
-                throw new GeneralJsonException('failed to create User', 500);
-            }
+            if(!$created) throw new GeneralJsonException('failed to create User', 500);
+
+            event(new UserCreated($created));
 
             return $created;
         });
@@ -33,6 +36,7 @@ class UserRepository extends BaseRepository{
             ]);
 
             if (!$updated) throw new GeneralJsonException("Gagal Update", 500);
+            event(new UserUpdated($updated));
             
             return $user;
         });
@@ -45,6 +49,7 @@ class UserRepository extends BaseRepository{
             if(!$deleted){
                 return new \Exception("cannot delete User");
             }
+            event(new UserDeleted($user));
             return $deleted;
         });
     }
